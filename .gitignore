@@ -1,0 +1,28 @@
+# Rust build output
+/target/
+
+# Generated measurement datasets
+measurements.txt
+measurements*.txt
+measurements*.csv
+measurements*.txt.gz
+measurements*.csv.gz
+/datasets/
+
+# Local profiling output
+/profile*.json
+/profile*.json.gz
+/flamegraph*.svg
+/perf.data*
+*.profraw
+*.profdata
+*.trace
+
+# OS and editor artifacts
+.DS_Store
+Thumbs.db
+/.idea/
+/.vscode/
+*.swp
+*.swo
+*~
