@@ -13,13 +13,14 @@ fn main() {
         let line = line.unwrap();
         let (station, temperature) = line.split_once(';').unwrap();
         let temperature: f64 = temperature.parse::<f64>().unwrap();
-        let stats = map
-            .entry(station.to_string())
-            .or_insert((f64::MAX, 0.0, 0, f64::MIN));
-        stats.0 = stats.0.min(temperature);
-        stats.1 += temperature;
-        stats.2 += 1;
-        stats.3 = stats.3.max(temperature);
+        if let Some(stats) = map.get_mut(station) {
+            stats.0 = stats.0.min(temperature);
+            stats.1 += temperature;
+            stats.2 += 1;
+            stats.3 = stats.3.max(temperature);
+        } else {
+            map.insert(station.to_string(), (f64::MAX, 0.0, 0, f64::MIN));
+        }
     }
 
     print!("{{");
