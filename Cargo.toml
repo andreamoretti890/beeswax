@@ -4,9 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [profile.release]
-lto="fat"
-panic="abort"
-debug="full"
+lto = "fat"
+panic = "abort"
+debug = "full"
 split-debuginfo = "packed"
+overflow-checks = false
 
 [dependencies]

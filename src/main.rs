@@ -7,19 +7,22 @@ use std::{
 fn main() {
     let file = File::open("measurements.txt").expect("Unable to read the file");
     let reader = BufReader::with_capacity(10_000_000_000, file);
-    let mut map = HashMap::<String, (f64, f64, usize, f64)>::with_capacity(10_000);
+    let mut map = HashMap::<Vec<u8>, (f64, f64, usize, f64)>::with_capacity(10_000);
 
-    for line in reader.lines() {
+    for line in reader.split(b'\n') {
         let line = line.unwrap();
-        let (station, temperature) = line.split_once(';').unwrap();
-        let temperature: f64 = temperature.parse::<f64>().unwrap();
+        let mut fields = line.split(|l| *l == b';');
+        let station = fields.next().unwrap();
+        let temperature = fields.next().unwrap();
+        let temperature: f64 = str::from_utf8(temperature).unwrap().parse().unwrap();
+
         if let Some(stats) = map.get_mut(station) {
             stats.0 = stats.0.min(temperature);
             stats.1 += temperature;
             stats.2 += 1;
             stats.3 = stats.3.max(temperature);
         } else {
-            map.insert(station.to_string(), (f64::MAX, 0.0, 0, f64::MIN));
+            map.insert(station.to_vec(), (temperature, temperature, 0, temperature));
         }
     }
 
@@ -27,7 +30,11 @@ fn main() {
     let stats = BTreeMap::from_iter(map);
     let mut stats = stats.into_iter().peekable();
     while let Some((station, (min, sum, count, max))) = stats.next() {
-        print!("{station}={min:.1}/{:.1}/{max:.1}", sum / (count as f64));
+        print!(
+            "{}={min:.1}/{:.1}/{max:.1}",
+            str::from_utf8(&station).unwrap(),
+            sum / (count as f64)
+        );
         if stats.peek().is_some() {
             print!(", ");
         }
