@@ -1,16 +1,18 @@
 use std::{
     collections::{BTreeMap, HashMap},
     fs::File,
-    io::{BufRead, BufReader},
 };
 
 fn main() {
     let file = File::open("measurements.txt").expect("Unable to read the file");
-    let reader = BufReader::with_capacity(10_000_000_000, file);
+    let memmap = unsafe { memmap2::Mmap::map(&file) }.unwrap();
     let mut map = HashMap::<Vec<u8>, (f64, f64, usize, f64)>::with_capacity(10_000);
 
-    for line in reader.split(b'\n') {
-        let line = line.unwrap();
+    for line in memmap.split(|l| *l == b'\n') {
+        if line.is_empty() {
+            break;
+        }
+
         let mut fields = line.split(|l| *l == b';');
         let station = fields.next().unwrap();
         let temperature = fields.next().unwrap();

@@ -11,3 +11,4 @@ split-debuginfo = "packed"
 overflow-checks = false
 
 [dependencies]
+memmap2 = "0.9.11"
