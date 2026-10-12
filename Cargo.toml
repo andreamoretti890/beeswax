@@ -12,3 +12,4 @@ overflow-checks = false
 
 [dependencies]
 memmap2 = "0.9.11"
+memchr = "2.8.3"

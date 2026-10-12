@@ -13,9 +13,11 @@ fn main() {
             break;
         }
 
-        let mut fields = line.split(|l| *l == b';');
-        let station = fields.next().unwrap();
-        let temperature = fields.next().unwrap();
+        let position = memchr::memchr(b';', line).unwrap();
+        let (station, temperature) = line.split_at(position);
+        // let mut fields = line.split(|l| *l == b';');
+        // let station = fields.next().unwrap();
+        // let temperature = fields.next().unwrap();
         let temperature: f64 = str::from_utf8(temperature).unwrap().parse().unwrap();
 
         if let Some(stats) = map.get_mut(station) {
